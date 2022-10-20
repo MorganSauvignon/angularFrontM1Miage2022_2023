@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Assignment } from '../assignments/assignment.model';
 import { AssignmentsService } from '../shared/assignments.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-assignment-detail',
@@ -11,9 +12,9 @@ import { ActivatedRoute } from '@angular/router';
 export class AssignmentDetailComponent implements OnInit {
 
   // @Input() 
-  assignementTransmis!: Assignment | undefined;
+  assignmentTransmis!: Assignment | undefined;
 
-  constructor(private assignmentsService: AssignmentsService, private route: ActivatedRoute) { }
+  constructor(private assignmentsService: AssignmentsService, private route: ActivatedRoute, private router: Router, private authService : AuthService) { }
 
   ngOnInit(): void {
 
@@ -24,28 +25,45 @@ export class AssignmentDetailComponent implements OnInit {
 
     const id = this.route.snapshot.params['id'];
 
-    this.assignmentsService.getAssignment(id).subscribe(assignment => this.assignementTransmis = assignment);
+    this.assignmentsService.getAssignment(id).subscribe(assignment => this.assignmentTransmis = assignment);
 
   }
 
 
   onAssignementRendu() {
-if(!this.assignementTransmis) return;
+    if(!this.assignmentTransmis) return;
 
-    this.assignementTransmis.rendu = true ;
+    this.assignmentTransmis.rendu = true ;
 
     
-    this.assignmentsService.updateAssignment(this.assignementTransmis).subscribe(message => console.log(message));
+    this.assignmentsService.updateAssignment(this.assignmentTransmis).subscribe(message => console.log(message));
     
+    this.router.navigate(['/home']);
+
   }
 
   onDelete() {
 
-    if(!this.assignementTransmis) return;
+    if(!this.assignmentTransmis) return;
 
-    this.assignmentsService.deleteAssignment(this.assignementTransmis).subscribe((message) => console.log(message));
+    this.assignmentsService.deleteAssignment(this.assignmentTransmis).subscribe((message) => console.log(message));
 
-    this.assignementTransmis != null;
+    this.assignmentTransmis != null;
+
+    this.router.navigate(['/home']);
   }
+
+  onClickEdit(){
+    if(!this.assignmentTransmis) return;
+
+      this.router.navigate(["/assignment", this.assignmentTransmis.id, 'edit' ], 
+      {queryParams:{nom:this.assignmentTransmis.nom}, fragment:'edition'});
+    
+    }
+
+    isAdmin():boolean
+    {
+      return this.authService.loggedIn;
+    }
 
 }
