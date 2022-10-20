@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Assignment } from './assignment.model';
+import { AssignmentsService } from '../shared/assignments.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-assignments, datepicker-overview-example',
@@ -17,47 +19,35 @@ export class AssignmentsComponent implements OnInit {
  nomDevoir:string="";
  dateDeRendu!:Date;
 
- formVisible = false;
+ assignments!:Assignment[];
+
+ constructor (private AssignmentService:AssignmentsService){}
 
  ngOnInit(): void{
-
+    this.getAssignments();
   }
+
+  getAssignments(){
+    this.AssignmentService.getAssignments().subscribe(assignments => this.assignments = assignments);
+  }
+
+
 
  
   assignmentClique(assignment:Assignment) {
     this.assignementSelectionne = assignment;
   }
  
- onAddAssignmentBtnClick(){
-  this.formVisible = true;
- }
+//  onAddAssignmentBtnClick(){
+  // this.formVisible = true;
+//  }
 
- onNouvelAssignment(event: Assignment)
- {
-  this.assignments.push(event);
-  this.formVisible = false;
- }
+//  onNouvelAssignment(event: Assignment)
+//  {
+//   // this.assignments.push(event);
+//   this.AssignmentService.addAssignment(event).subscribe(message => console.log(message));
+//   // this.formVisible = false;
+//  }
 
-  assignments:Assignment[] = [
-    {
-      nom: "Devoir Angular à rendre",
-      dateDeRendu: new Date("2022-10-10"),
-      rendu: true
-    },
-    {
-      nom: "Devoir NodeJs à rendre",
-      dateDeRendu:  new Date("2022-11-10"),
-      rendu: false
-    },
-    {
-      nom: "Devoir JAVA à rendre",
-      dateDeRendu:  new Date("2022-12-10"),
-      rendu: true
-    }
-
-  ]
-
- 
- constructor() { }
 
 }
